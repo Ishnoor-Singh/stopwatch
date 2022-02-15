@@ -41,8 +41,10 @@ module final_display(
 	 reg [3:0] three = 4'b1011;
 	 reg [3:0] four = 4'b0111;
 	 
+	 reg c_blank = 7'b1111111;
 	 
-	 always @(posedge clk) begin
+	 
+	 always @(posedge clk_sys) begin
 		if (rst) begin
 			cathode <= 7'b1111110;
 			anode <= 7'b1110;
@@ -50,24 +52,87 @@ module final_display(
 	 end
 	 // at every clk fast, update if no adj or sel
 	 always @(posedge clk_fast)  begin
-		if (anode == one) begin
-			cathode <= c_1;
-			anode <= two;
+		if (!adj) begin
+			if (anode == one) begin
+				cathode <= c_0;
+				anode <= two;
+			end
+			else if (anode == two) begin
+				cathode <= c_1;
+				anode <= three;
+			end
+			else if (anode == three) begin
+				cathode <= c_2;
+				anode <= four;
+			end
+			else if (anode == four) begin
+				cathode <= c_3;
+				anode <= one;
+			end
 		end
-		else if (anode == two) begin
-			cathode <= c_2;
-			anode <= three;
-		end
-		else if (anode == three) begin
-			cathode <= c_3;
-			anode <= four;
-		end
-		else if (anode == four) begin
-			cathode <= c_4;
-			anode <= one;
+		// to make things blink
+		else begin
+			if (anode == one) begin
+				if (sel == 1) begin
+					if (clk_blink == 1) begin
+						cathode <= c_0;
+					end 
+					else begin
+						cathode <= c_blank;
+					end
+				end
+				else begin
+					cathode <= c_0;
+				end
+				anode <= two;
+			end
+			else if (anode == two) begin
+				if (sel == 1) begin
+					if (clk_blink == 1) begin
+						cathode <= c_1;
+					end 
+					else begin
+						cathode <= c_blank;
+					end
+				end
+				else begin
+					cathode <= c_1;
+				end
+				anode <= three;
+			end
+			else if (anode == three) begin
+				if (sel == 0) begin
+					if (clk_blink == 1) begin
+						cathode <= c_2;
+					end 
+					else begin
+						cathode <= c_blank;
+					end
+				end
+				else begin
+					cathode <= c_2;
+				end
+				anode <= four;
+			end
+			else if (anode == four) begin
+							if (sel == 0) begin
+					if (clk_blink == 1) begin
+						cathode <= c_3;
+					end 
+					else begin
+						cathode <= c_blank;
+					end
+				end
+				else begin
+					cathode <= c_3;
+				end
+				cathode <= c_3;
+				anode <= one;
+			end
 		end
 	 end
-// 
+	 
+	 // 
 
 endmodule
 	
