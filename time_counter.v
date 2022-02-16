@@ -25,13 +25,12 @@ module time_counter(
 		input rst,
 		input clk_1Hz,
 		input clk_2Hz,
-		output [6:0] minutes,
+		output [5:0] minutes,
 		output [5:0] seconds
     );
 	 
-	 reg [6:0] mc;
+	 reg [5:0] mc;
 	 reg [5:0] sc;
-	 reg isPaused;
 	 
 	 reg clock;
 	 always @(*) begin
@@ -42,19 +41,15 @@ module time_counter(
 		 end
 	 end	 
 	 
-	 always @(posedge pause or negedge pause) begin
-		isPaused <= ~isPaused;
-	 end
 
 	 always @(posedge clock or posedge rst) begin
 		if(rst) begin
-			mc <= 7'd0;
-			sc <= 6'd00;
-			isPaused <= 1'd0;
-		end else if(~isPaused && ~adj) begin
+			mc <= 6'd0;
+			sc <= 6'd0; 
+		end else if(~pause && ~adj) begin
 			if(sc == 6'd59) begin
-				if(mc == 7'd99) begin
-					mc <= 7'd0;
+				if(mc == 6'd59) begin
+					mc <= 6'd0;
 				end else begin
 					mc <= mc + 1;
 				end
@@ -62,13 +57,13 @@ module time_counter(
 			end else begin
 				sc <= sc + 1;
 			end
-		end else if(~isPaused && adj && ~sel) begin
-			if(mc == 7'd99) begin
-				mc <= 7'd0;
+		end else if(~pause && adj && ~sel) begin
+			if(mc == 6'd59) begin
+				mc <= 6'd0;
 			end else begin
 				mc <= mc + 1;
 			end
-		end else if(~isPaused && adj && sel) begin
+		end else if(~pause && adj && sel) begin
 			if(sc == 6'd59) begin
 				sc <= 6'd0;
 			end else begin
@@ -81,4 +76,3 @@ module time_counter(
 	 assign seconds = sc;
 	 
  endmodule
-

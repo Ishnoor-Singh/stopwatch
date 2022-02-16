@@ -29,6 +29,26 @@ module top_level(
     );
 	 
 	 // Outputs
+	 wire rstState;
+	 
+	// Instantiate the Unit Under Test (UUT)
+	debouncer rst_dbncr(
+		.clk(clk),
+		.btn(rst),
+		.state(rstState)
+	);
+	
+	// Outputs
+	 wire pauseState;
+	 
+	// Instantiate the Unit Under Test (UUT)
+	debouncer pause_dbncr(
+		.clk(clk),
+		.btn(pause),
+		.state(pauseState)
+	);
+	 
+	 // Outputs
 	wire clk_1Hz;
 	wire clk_2Hz;
 	wire clk_fast;
@@ -37,7 +57,7 @@ module top_level(
 	// Instantiate the Unit Under Test (UUT)
 	clk_div clks (
 		.clk_in(clk),
-		.rst(rst), 
+		.rst(rstState), 
 		.clk_1Hz(clk_1Hz), 
 		.clk_2Hz(clk_2Hz), 
 		.clk_fast(clk_fast), 
@@ -45,26 +65,25 @@ module top_level(
 	);
 	
 	// Outputs
-	wire minutes;
-	wire seconds;
+	wire [5:0] minutes;
+	wire [5:0] seconds;
 
 	// Instantiate the Unit Under Test (UUT)
 	time_counter cnt (
-		.adj(adj), 
-		.sel(sel), 
-		.pause(pause), 
-		.rst(rst), 
-		.clk_1Hz(clk_1Hz), 
-		.clk_2Hz(clk_2Hz), 
-		.clk_in(clk), 
-		.minutes(minutes), 
+		.adj(adj),
+		.sel(sel),
+		.pause(pauseState),
+		.rst(rstState),
+		.clk_1Hz(clk_1Hz),
+		.clk_2Hz(clk_2Hz),
+		.minutes(minutes),
 		.seconds(seconds)
 	);
 	
-	wire min0;
-	wire min1;
-	wire sec0;
-	wire sec1;
+	wire [3:0] min0;
+	wire [3:0] min1;
+	wire [3:0] sec0;
+	wire [3:0] sec1;
 	
 	get_digits digs (
 		.minutes(minutes),
@@ -75,10 +94,10 @@ module top_level(
 		.sec1(sec1)
 	);
 	
-	wire m0;
-	wire m1;
-	wire s0;
-	wire s1;
+	wire [6:0] m0;
+	wire [6:0] m1;
+	wire [6:0] s0;
+	wire [6:0] s1;
 	
 	get_cathode gc1 (
 		.number(min0),
@@ -101,13 +120,15 @@ module top_level(
 	);
 	
 	final_display show(
+		.clk_blink(clk_blink),
 		.clk_fast(clk_fast),
 		.adj(adj), 
 		.sel(sel),
-		.c_0(s1),
-		.c_1(s0),
-		.c_2(m1),
-		.c_3(m0),
+		.rst(rstState),
+		.c_0(s0),
+		.c_1(s1),
+		.c_2(m0),
+		.c_3(m1),
 		.cathode(cathode),
 		.anode(anode)
 	);

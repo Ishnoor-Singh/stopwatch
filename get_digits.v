@@ -19,7 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module get_digits(
-		input [6:0] minutes,
+		input [5:0] minutes,
 		input [5:0] seconds,
 		output [3:0] min0,
 		output [3:0] min1,

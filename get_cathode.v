@@ -19,11 +19,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module get_cathode(
-	input number,
+	input [3:0] number,
 	output [6:0] cathode
     );
 	 
-	 reg c;
+	 reg [6:0] c;
 	 
 	 always @(*) begin
 		if (number == 0) begin
