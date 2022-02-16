@@ -29,16 +29,16 @@ module debouncer(
 	 reg [19:0] c;
 	 
 	 always @(posedge clk) begin
-		// button not pressed
-		if (btn == 0) begin
-			bs <= 0;
-			c <= 0;
-		end else begin
+		// button pressed
+		if (btn == 1) begin
 			c <= c + 1'b1;
 			if (c == 20'b11111111111111111111) begin
 				bs <= 1;
 				c <= 0;
 			end
+		end else begin
+			bs <= 0;
+			c <= 0;<= 0;
 		end
 	 end
 	 
